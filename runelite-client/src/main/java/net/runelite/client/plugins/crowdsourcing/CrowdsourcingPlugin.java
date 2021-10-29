@@ -31,6 +31,7 @@ import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.plugins.crowdsourcing.cooking.CrowdsourcingCooking;
+import net.runelite.client.plugins.crowdsourcing.crafting.CrowdsourcingCrafting;
 import net.runelite.client.plugins.crowdsourcing.dialogue.CrowdsourcingDialogue;
 import net.runelite.client.plugins.crowdsourcing.movement.CrowdsourcingMovement;
 import net.runelite.client.plugins.crowdsourcing.music.CrowdsourcingMusic;
@@ -58,6 +59,9 @@ public class CrowdsourcingPlugin extends Plugin
 	private CrowdsourcingCooking cooking;
 
 	@Inject
+	private CrowdsourcingCrafting crafting;
+
+	@Inject
 	private CrowdsourcingDialogue dialogue;
 
 	@Inject
@@ -79,6 +83,7 @@ public class CrowdsourcingPlugin extends Plugin
 	protected void startUp() throws Exception
 	{
 		eventBus.register(cooking);
+		eventBus.register(crafting);
 		eventBus.register(dialogue);
 		eventBus.register(movement);
 		eventBus.register(music);
@@ -91,6 +96,7 @@ public class CrowdsourcingPlugin extends Plugin
 	protected void shutDown() throws Exception
 	{
 		eventBus.unregister(cooking);
+		eventBus.unregister(crafting);
 		eventBus.unregister(dialogue);
 		eventBus.unregister(movement);
 		eventBus.unregister(music);
