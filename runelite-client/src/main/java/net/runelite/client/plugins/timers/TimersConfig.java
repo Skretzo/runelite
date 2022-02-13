@@ -293,4 +293,14 @@ public interface TimersConfig extends Config
 	{
 		return true;
 	}
+
+	@ConfigItem(
+		keyName = "showDesertHeat",
+		name = "Desert heat timer",
+		description = "Configures whether the desert heat timer is displayed"
+	)
+	default boolean showDesertHeat()
+	{
+		return true;
+	}
 }

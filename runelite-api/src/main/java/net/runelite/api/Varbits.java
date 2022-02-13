@@ -648,6 +648,14 @@ public enum Varbits
 	 * 1 = Enabled
 	 */
 	SHOW_PVP_KDR_STATS(4143),
+
+	/**
+	 * The interval in game ticks between desert heat damage.
+	 *
+	 * 0 = Disabled
+	 * 150 = Standard interval (no desert clothing)
+	 */
+	DESERT_HEAT(13137),
 	;
 
 	/**

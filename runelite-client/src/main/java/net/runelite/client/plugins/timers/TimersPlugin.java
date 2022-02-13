@@ -125,6 +125,8 @@ public class TimersPlugin extends Plugin
 	private static final String WARD_OF_ARCEUUS_MESSAGE = ">Your defence against Arceuus magic has been strengthened.</col>";
 	private static final String PICKPOCKET_FAILURE_MESSAGE = "You fail to pick the ";
 	private static final String DODGY_NECKLACE_PROTECTION_MESSAGE = "Your dodgy necklace protects you.";
+	private static final String DESERT_HEAT_DAMAGE_MESSAGE = "You start dying of thirst while you're in the desert.";
+	private static final String DESERT_HEAT_WATERSKIN_MESSAGE = "You take a drink of water.";
 
 	private static final Pattern TELEBLOCK_PATTERN = Pattern.compile("A Tele Block spell has been cast on you(?: by .+)?\\. It will expire in (?<mins>\\d+) minutes?(?:, (?<secs>\\d+) seconds?)?\\.");
 	private static final Pattern DIVINE_POTION_PATTERN = Pattern.compile("You drink some of your divine (.+) potion\\.");
@@ -152,6 +154,7 @@ public class TimersPlugin extends Plugin
 	private int lastPvpVarb;
 	private int lastCorruptionVarb;
 	private int lastImbuedHeartVarb;
+	private int lastDesertHeatVarb;
 	private boolean imbuedHeartTimerActive;
 	private int nextPoisonTick;
 	private WorldPoint lastPoint;
@@ -201,6 +204,7 @@ public class TimersPlugin extends Plugin
 		staminaTimer = null;
 		imbuedHeartTimerActive = false;
 		lastImbuedHeartVarb = 0;
+		lastDesertHeatVarb = 0;
 	}
 
 	@Subscribe
@@ -213,6 +217,7 @@ public class TimersPlugin extends Plugin
 		int pvpVarb = client.getVar(Varbits.PVP_SPEC_ORB);
 		int corruptionCooldownVarb = client.getVar(Varbits.CORRUPTION_COOLDOWN);
 		int imbuedHeartCooldownVarb = client.getVar(Varbits.IMBUED_HEART_COOLDOWN);
+		int desertHeatVarb = client.getVar(Varbits.DESERT_HEAT);
 
 		if (lastRaidVarb != raidVarb)
 		{
@@ -318,6 +323,20 @@ public class TimersPlugin extends Plugin
 			}
 
 			lastImbuedHeartVarb = imbuedHeartCooldownVarb;
+		}
+
+		if (lastDesertHeatVarb != desertHeatVarb && config.showDesertHeat())
+		{
+			if (desertHeatVarb == 0)
+			{
+				removeGameTimer(DESERT_HEAT);
+			}
+			else
+			{
+				createGameTimer(DESERT_HEAT, Duration.of(desertHeatVarb + 1, RSTimeUnit.GAME_TICKS));
+			}
+
+			lastDesertHeatVarb = desertHeatVarb;
 		}
 	}
 
@@ -433,6 +452,11 @@ public class TimersPlugin extends Plugin
 		else
 		{
 			createTzhaarTimer();
+		}
+
+		if (!config.showDesertHeat())
+		{
+			removeGameTimer(DESERT_HEAT);
 		}
 	}
 
@@ -683,6 +707,11 @@ public class TimersPlugin extends Plugin
 			freezeTime = client.getTickCount();
 		}
 
+		if (config.showDesertHeat() && isDesertHeatMessage(message))
+		{
+			createGameTimer(DESERT_HEAT, Duration.of(client.getVar(Varbits.DESERT_HEAT), RSTimeUnit.GAME_TICKS));
+		}
+
 		if (config.showDivine())
 		{
 			Matcher mDivine = DIVINE_POTION_PATTERN.matcher(message);
@@ -850,6 +879,17 @@ public class TimersPlugin extends Plugin
 	private boolean isInNightmareZone()
 	{
 		return client.getLocalPlayer() != null && client.getLocalPlayer().getWorldLocation().getPlane() > 0 && ArrayUtils.contains(client.getMapRegions(), NMZ_MAP_REGION_ID);
+	}
+
+	private boolean isDesertHeatMessage(String message)
+	{
+		switch (message)
+		{
+			case DESERT_HEAT_DAMAGE_MESSAGE:
+			case DESERT_HEAT_WATERSKIN_MESSAGE:
+				return true;
+		}
+		return false;
 	}
 
 	private void createTzhaarTimer()
