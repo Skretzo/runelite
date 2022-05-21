@@ -114,15 +114,20 @@ public class ConfigPlugin extends Plugin
 				return;
 			}
 
-			// Expand config panel for plugin
-			SwingUtilities.invokeLater(() ->
-			{
-				if (!navButton.isSelected())
-				{
-					navButton.getOnSelect().run();
-				}
-				pluginListPanel.openConfigurationPanel(plugin.getName());
-			});
+			openConfig(plugin.getName());
 		}
+	}
+
+	public void openConfig(String pluginName)
+	{
+		// Expand config panel for plugin
+		SwingUtilities.invokeLater(() ->
+		{
+			if (!navButton.isSelected())
+			{
+				navButton.getOnSelect().run();
+			}
+			pluginListPanel.openConfigurationPanel(pluginName);
+		});
 	}
 }
