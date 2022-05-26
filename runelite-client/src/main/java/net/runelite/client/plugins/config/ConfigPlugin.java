@@ -24,6 +24,7 @@
  */
 package net.runelite.client.plugins.config;
 
+import com.google.inject.Binder;
 import java.awt.image.BufferedImage;
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -67,6 +68,12 @@ public class ConfigPlugin extends Plugin
 	private PluginListPanel pluginListPanel;
 
 	private NavigationButton navButton;
+
+	@Override
+	public void configure(Binder binder)
+	{
+		binder.bind(ConfigService.class).to(ConfigServiceImpl.class);
+	}
 
 	@Override
 	protected void startUp() throws Exception
@@ -114,15 +121,20 @@ public class ConfigPlugin extends Plugin
 				return;
 			}
 
-			// Expand config panel for plugin
-			SwingUtilities.invokeLater(() ->
-			{
-				if (!navButton.isSelected())
-				{
-					navButton.getOnSelect().run();
-				}
-				pluginListPanel.openConfigurationPanel(plugin.getName());
-			});
+			openConfig(plugin.getName());
 		}
+	}
+
+	void openConfig(String pluginName)
+	{
+		// Expand config panel for plugin
+		SwingUtilities.invokeLater(() ->
+		{
+			if (!navButton.isSelected())
+			{
+				navButton.getOnSelect().run();
+			}
+			pluginListPanel.openConfigurationPanel(pluginName);
+		});
 	}
 }
