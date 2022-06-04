@@ -819,6 +819,7 @@ public final class WidgetID
 	static class QuestList
 	{
 		static final int BOX = 0;
+		static final int TITLE = 1;
 		static final int CONTAINER = 2;
 	}
 
