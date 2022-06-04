@@ -175,6 +175,7 @@ public final class WidgetID
 	public static final int GROUP_STORAGE_GROUP_ID = 724;
 	public static final int WILDERNESS_LOOT_CHEST = 742;
 	public static final int TRADE_WINDOW_GROUP_ID = 335;
+	public static final int CHARACTER_SIDE_JOURNAL_GROUP_ID = 629;
 
 	static class WorldMap
 	{
@@ -949,5 +950,10 @@ public final class WidgetID
 	static class Trade
 	{
 		static final int HEADER = 31;
+	}
+
+	static class CharacterSideJournal
+	{
+		static final int QUEST_TAB = 8;
 	}
 }
