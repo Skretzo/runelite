@@ -230,6 +230,10 @@ public class CollisionMapDumper
 								{
 									tile = exclusion;
 								}
+								else if (object.getInteractType() == 0)
+								{
+									continue;
+								}
 								for (int sx = 0; sx < sizeX; sx++)
 								{
 									for (int sy = 0; sy < sizeY; sy++)
@@ -244,10 +248,15 @@ public class CollisionMapDumper
 							else
 							{
 								boolean door = object.getWallOrDoor() != 0;
+								boolean doorway = !door && object.getInteractType() == 0 && type == 0;
 								tile = door ? FlagMap.TILE_DEFAULT : FlagMap.TILE_BLOCKED;
 								if (exclusion != null)
 								{
 									tile = exclusion;
+								}
+								else if (doorway)
+								{
+									continue;
 								}
 
 								if (type == 0 || type == 2)
@@ -385,9 +394,14 @@ public class CollisionMapDumper
 						}
 					}
 
+					// Tile without floor / floating in the air
+					int underlayId = region.getUnderlayId(z < 3 ? tileZ : z, localX, localY);
+					int overlayId = region.getOverlayId(z < 3 ? tileZ : z, localX, localY);
+					boolean noFloor = underlayId == 0 && overlayId == 0;
+
 					// Nomove
 					int floorType = region.getTileSetting(z < 3 ? tileZ : z, localX, localY);
-					if (floorType == 1 || floorType == 5 || floorType == 7)
+					if (floorType == 1 || floorType == 5 || floorType == 7 || noFloor)
 					{
 						flagMap.set(regionX, regionY, z, FlagMap.FLAG_NORTH, FlagMap.TILE_BLOCKED);
 						flagMap.set(regionX, regionY, z, FlagMap.FLAG_EAST, FlagMap.TILE_BLOCKED);
@@ -493,8 +507,6 @@ public class CollisionMapDumper
 		APE_ATOLL_JAIL_DOOR_4801(4801),
 
 		ARDOUGNE_BASEMENT_CELL_DOOR_35795(35795),
-
-		BAMBOO_DOORWAY_1593(1593, FlagMap.TILE_DEFAULT),
 
 		BRIMHAVEN_DUNGEON_EXIT_20878(20878),
 
