@@ -35,12 +35,14 @@ import javax.annotation.Nullable;
 import net.runelite.api.annotations.VarCInt;
 import net.runelite.api.annotations.VarCStr;
 import net.runelite.api.annotations.Varbit;
+import net.runelite.api.annotations.Varp;
 import net.runelite.api.annotations.VisibleForDevtools;
 import net.runelite.api.clan.ClanChannel;
 import net.runelite.api.clan.ClanID;
 import net.runelite.api.clan.ClanSettings;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldPoint;
+import net.runelite.api.dbtable.DBRowConfig;
 import net.runelite.api.hooks.Callbacks;
 import net.runelite.api.hooks.DrawCallbacks;
 import net.runelite.api.vars.AccountType;
@@ -216,7 +218,9 @@ public interface Client extends OAuthApi, GameEngine
 	 * Gets the account type of the logged in player.
 	 *
 	 * @return the account type
+	 * @deprecated see Varbits#ACCOUNT_TYPE
 	 */
+	@Deprecated
 	AccountType getAccountType();
 
 	@Override
@@ -794,24 +798,6 @@ public interface Client extends OAuthApi, GameEngine
 	Map<Integer, Object> getVarcMap();
 
 	/**
-	 * Gets the value corresponding to the passed player variable.
-	 *
-	 * @param varPlayer the player variable
-	 * @return the value
-	 * @see Client#getVarpValue(VarPlayer)
-	 */
-	@Deprecated
-	int getVar(VarPlayer varPlayer);
-
-	/**
-	 * Gets the value corresponding to the passed player variable.
-	 *
-	 * @param varPlayer the player variable
-	 * @return the value
-	 */
-	int getVarpValue(VarPlayer varPlayer);
-
-	/**
 	 * Gets a value corresponding to the passed varbit.
 	 *
 	 * @param varbit the varbit id
@@ -845,7 +831,7 @@ public interface Client extends OAuthApi, GameEngine
 	 * @param varpId the VarPlayer id
 	 * @return the value
 	 */
-	int getVarpValue(int varpId);
+	int getVarpValue(@Varp int varpId);
 
 	/**
 	 * Gets the value of a given VarPlayer.
@@ -856,7 +842,7 @@ public interface Client extends OAuthApi, GameEngine
 	 * @param varpId the VarPlayer id
 	 * @return the value
 	 */
-	int getServerVarpValue(int varpId);
+	int getServerVarpValue(@Varp int varpId);
 
 	/**
 	 * Gets the value of a given VarClientInt
@@ -935,7 +921,7 @@ public interface Client extends OAuthApi, GameEngine
 	 * triggered next tick
 	 * @param varp
 	 */
-	void queueChangedVarp(int varp);
+	void queueChangedVarp(@Varp int varp);
 
 	/**
 	 * Gets the widget flags table.
@@ -1036,6 +1022,8 @@ public interface Client extends OAuthApi, GameEngine
 	 */
 	Object getDBTableField(int rowID, int column, int tupleIndex, int fieldIndex);
 
+	DBRowConfig getDBRowConfig(int rowID);
+
 	/**
 	 * Get a map element config by id
 	 *
@@ -1127,7 +1115,7 @@ public interface Client extends OAuthApi, GameEngine
 	 * @param endHeight end height of projectile - excludes tile height
 	 * @param target optional actor target
 	 * @param targetX target x - if an actor target is supplied should be the target x
-	 * @param targetY taret y - if an actor target is supplied should be the target y
+	 * @param targetY target y - if an actor target is supplied should be the target y
 	 * @return the new projectile
 	 */
 	Projectile createProjectile(int id, int plane, int startX, int startY, int startZ, int startCycle, int endCycle,
@@ -1714,14 +1702,6 @@ public interface Client extends OAuthApi, GameEngine
 	boolean isInInstancedRegion();
 
 	/**
-	 * Get the number of client ticks an item has been pressed
-	 *
-	 * @return the number of client ticks an item has been pressed
-	 */
-	@Deprecated
-	int getItemPressedDuration();
-
-	/**
 	 * Gets an array of tile collision data.
 	 * <p>
 	 * The index into the array is the plane/z-axis coordinate.
@@ -1873,21 +1853,6 @@ public interface Client extends OAuthApi, GameEngine
 	void checkClickbox(Model model, int orientation, int pitchSin, int pitchCos, int yawSin, int yawCos, int x, int y, int z, long hash);
 
 	/**
-	 * Get the if1 widget whose item is being dragged
-	 *
-	 * @return
-	 */
-	@Deprecated
-	Widget getIf1DraggedWidget();
-
-	/**
-	 * Get the item index of the item being dragged on an if1 widget
-	 * @return
-	 */
-	@Deprecated
-	int getIf1DraggedItemIndex();
-
-	/**
 	 * Is a widget is in target mode?
 	 */
 	boolean isWidgetSelected();
@@ -1896,20 +1861,6 @@ public interface Client extends OAuthApi, GameEngine
 	 * Sets if a widget is in target mode
 	 */
 	void setWidgetSelected(boolean selected);
-
-	/**
-	 * Get if an item is selected with "Use"
-	 * @return 1 if selected, else 0
-	 */
-	@Deprecated
-	int getSelectedItem();
-
-	/**
-	 * If an item is selected, this is the item index in the inventory.
-	 * @return
-	 */
-	@Deprecated
-	int getSelectedItemIndex();
 
 	/**
 	 * Get the selected widget, such as a selected spell or selected item (eg. "Use")
