@@ -53,7 +53,7 @@ import org.apache.commons.cli.ParseException;
  *
  * Cache and XTEA keys can be downloaded from:
  * https://archive.openrs2.org/caches
- * and replace "mapsquares" with "regions" and "key" with "keys"
+ * and replace "mapsquare" with "region" and "key" with "keys"
  */
 public class CollisionMapDumper
 {
@@ -372,8 +372,7 @@ public class CollisionMapDumper
 						// Remaining objects
 						if (type == 22 || (type >= 9 && type <= 11) || (type >= 12 && type <= 21))
 						{
-							if (object.getInteractType() != 0 && (object.getWallOrDoor() == 1 ||
-								type == 10 || (type >= 12 && type <= 21)))
+							if (object.getInteractType() != 0 && (object.getWallOrDoor() == 1 || (type >= 10 && type <= 21)))
 							{
 								if (exclusion != null)
 								{
@@ -394,14 +393,18 @@ public class CollisionMapDumper
 						}
 					}
 
-					// Tile without floor / floating in the air
+					// Tile without floor / floating in the air ("noclip" tiles, typically found where z > 0)
 					int underlayId = region.getUnderlayId(z < 3 ? tileZ : z, localX, localY);
 					int overlayId = region.getOverlayId(z < 3 ? tileZ : z, localX, localY);
 					boolean noFloor = underlayId == 0 && overlayId == 0;
 
 					// Nomove
 					int floorType = region.getTileSetting(z < 3 ? tileZ : z, localX, localY);
-					if (floorType == 1 || floorType == 5 || floorType == 7 || noFloor)
+					if (floorType == 1 || // water, rooftop wall
+						floorType == 3 || // bridge wall
+						floorType == 5 || // house wall/roof
+						floorType == 7 || // house wall
+						noFloor)
 					{
 						flagMap.set(regionX, regionY, z, FlagMap.FLAG_NORTH, FlagMap.TILE_BLOCKED);
 						flagMap.set(regionX, regionY, z, FlagMap.FLAG_EAST, FlagMap.TILE_BLOCKED);
