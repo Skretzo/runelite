@@ -124,15 +124,28 @@ public class BankPlugin extends Plugin
 			if (keybind.matches(e))
 			{
 				Widget bankContainer = client.getWidget(WidgetInfo.BANK_ITEM_CONTAINER);
-				if (bankContainer == null || bankContainer.isSelfHidden())
+				if (bankContainer != null && !bankContainer.isSelfHidden())
 				{
-					return;
+					log.debug("Search hotkey pressed");
+					bankSearch.initSearch();
+					e.consume();
 				}
 
-				log.debug("Search hotkey pressed");
-
-				bankSearch.initSearch();
-				e.consume();
+				Widget seedVaultSearchButton = client.getWidget(WidgetInfo.SEED_VAULT_SEARCH_BUTTON);
+				if (seedVaultSearchButton != null)
+				{
+					log.debug("Search hotkey pressed");
+					clientThread.invoke(() ->
+					{
+						Widget searchButton = client.getWidget(WidgetInfo.SEED_VAULT_SEARCH_BUTTON);
+						if (searchButton == null || searchButton.isHidden())
+						{
+							return;
+						}
+						client.runScript(searchButton.getOnOpListener());
+					});
+					e.consume();
+				}
 			}
 		}
 
@@ -257,12 +270,20 @@ public class BankPlugin extends Plugin
 	@Subscribe
 	public void onWidgetLoaded(WidgetLoaded event)
 	{
-		if (event.getGroupId() != WidgetID.SEED_VAULT_GROUP_ID || !config.seedVaultValue())
+		if (event.getGroupId() == WidgetID.SEED_VAULT_GROUP_ID && config.seedVaultValue())
 		{
-			return;
+			updateSeedVaultTotal();
 		}
-
-		updateSeedVaultTotal();
+		else if (event.getGroupId() == WidgetID.CLANKRANK_POPUP // also the Jagex account ad in the bank
+			&& config.blockJagexAccountAd())
+		{
+			var wn = client.getComponentTable()
+				.get(WidgetInfo.BANK_JAGEX_ACCOUNT_AD.getId());
+			if (wn != null)
+			{
+				clientThread.invokeLater(() -> client.closeInterface(wn, true));
+			}
+		}
 	}
 
 	@Subscribe

@@ -681,6 +681,24 @@ public interface Client extends OAuthApi, GameEngine
 	boolean isMenuOpen();
 
 	/**
+	 * Returns whether the currently open menu is scrollable.
+	 * @return
+	 */
+	boolean isMenuScrollable();
+
+	/**
+	 * Get the number of entries the currently open menu has been scrolled down.
+	 * @return
+	 */
+	int getMenuScroll();
+
+	/**
+	 * Set the number of entries the currently open menu has been scrolled down.
+	 * @param scroll
+	 */
+	void setMenuScroll(int scroll);
+
+	/**
 	 * Get the menu x location. Only valid if the menu is open.
 	 *
 	 * @return the menu x location
@@ -922,6 +940,13 @@ public interface Client extends OAuthApi, GameEngine
 	 * @param varp
 	 */
 	void queueChangedVarp(@Varp int varp);
+
+	/**
+	 * Close an interface
+	 * @param interfaceNode the {@link WidgetNode} linking the interface into the component tree
+	 * @param unload whether to null the client's widget table
+	 */
+	void closeInterface(WidgetNode interfaceNode, boolean unload);
 
 	/**
 	 * Gets the widget flags table.
@@ -1198,17 +1223,6 @@ public interface Client extends OAuthApi, GameEngine
 	 * @param volume 0-255 inclusive
 	 */
 	void setMusicVolume(int volume);
-
-	/**
-	 * @return true if the current {@link #getMusicCurrentTrackId()} is a Jingle, otherwise its a Track
-	 */
-	boolean isPlayingJingle();
-
-	/**
-	 * @return Currently playing music/jingle id, or -1 if not playing
-	 * @see #isPlayingJingle()
-	 */
-	int getMusicCurrentTrackId();
 
 	/**
 	 * Play a sound effect at the player's current location. This is how UI,

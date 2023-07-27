@@ -129,6 +129,7 @@ public final class WidgetID
 	public static final int LOOTING_BAG_GROUP_ID = 81;
 	public static final int SKOTIZO_GROUP_ID = 308;
 	public static final int FULLSCREEN_CONTAINER_TLI = 165;
+	public static final int CHARACTER_SUMMARY_GROUP_ID = 712;
 	public static final int QUESTLIST_GROUP_ID = 399;
 	public static final int SKILLS_GROUP_ID = 320;
 	public static final int MUSIC_GROUP_ID = 239;
@@ -195,6 +196,9 @@ public final class WidgetID
 	public static final int BGR_RANK_RUNEVERSI_GROUP_ID = 46;
 	public static final int AGILITY_ARENA_HUD_GROUP_ID = 5;
 	public static final int GNOMEBALL_SCORE_GROUP_ID = 139;
+	public static final int CLANKRANK_POPUP = 289;
+	public static final int SANITY_GROUP_ID = 834;
+	public static final int THE_STRANGLER_INFECTION_GROUP_ID = 836;
 
 	static class WorldMap
 	{
@@ -314,6 +318,7 @@ public final class WidgetID
 		static final int EQUIPMENT_CONTENT_CONTAINER = 69;
 		static final int SETTINGS_BUTTON = 113;
 		static final int EQUIPMENT_BUTTON = 114;
+		static final int JAGEX_ACCOUNT_AD = 116;
 	}
 
 	static class GroupStorage
@@ -774,6 +779,13 @@ public final class WidgetID
 		static final int CONTAINER = 2;
 	}
 
+	public static class CharacterSummary
+	{
+		static final int CONTAINER = 2;
+
+		public static final int COMBAT_LEVEL_BOX_CHILD_ID = 9;
+	}
+
 	static class QuestList
 	{
 		static final int BOX = 0;
@@ -806,6 +818,7 @@ public final class WidgetID
 		static final int TITLE_CONTAINER = 2;
 		static final int ITEM_CONTAINER = 15;
 		static final int ITEM_TEXT = 16;
+		static final int SEARCH_BUTTON = 24;
 	}
 
 	static class ExplorersRing
@@ -817,6 +830,7 @@ public final class WidgetID
 	{
 		static final int CAMERA_ZOOM_SLIDER_TRACK = 57;
 		static final int MUSIC_SLIDER = 92;
+		static final int MUSIC_SLIDER_STEP_HOLDER = 104;
 		static final int SOUND_EFFECT_SLIDER = 106;
 		static final int AREA_SOUND_SLIDER = 120;
 	}
