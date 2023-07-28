@@ -29,10 +29,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.BitSet;
 import java.util.Collection;
-import java.util.zip.GZIPOutputStream;
 import net.runelite.cache.definitions.ObjectDefinition;
 import net.runelite.cache.fs.Store;
 import net.runelite.cache.region.Location;
@@ -157,15 +155,18 @@ public class CollisionMapDumper
 
 		String name = region.getRegionX() + "_" + region.getRegionY();
 
-		try (GZIPOutputStream out = new GZIPOutputStream(new FileOutputStream(outputDirectory + "/" + name)))
+		byte[] buf = flagMap.toBytes();
+		if (buf.length > 0)
 		{
-			byte[] buf = flagMap.toBytes();
-			out.write(buf, 0, buf.length);
-			System.out.println("Exporting region " + name + " (" + n + " / " + total + ")");
-		}
-		catch (IOException e)
-		{
-			System.out.println("Unable to write compressed output bytes for " + name + ". " + e);
+			try (FileOutputStream out = new FileOutputStream(outputDirectory + "/" + name))
+			{
+				out.write(buf, 0, buf.length);
+				System.out.println("Exporting region " + name + " (" + n + " / " + total + ")");
+			}
+			catch (IOException e)
+			{
+				System.out.println("Unable to write compressed output bytes for " + name + ". " + e);
+			}
 		}
 	}
 
@@ -469,16 +470,7 @@ public class CollisionMapDumper
 
 		public byte[] toBytes()
 		{
-			byte[] bytes = new byte[16 + flags.size()];
-			ByteBuffer buffer = ByteBuffer.wrap(bytes);
-
-			buffer.putInt(minX);
-			buffer.putInt(minY);
-			buffer.putInt(maxX);
-			buffer.putInt(maxY);
-			buffer.put(flags.toByteArray());
-
-			return bytes;
+			return flags.toByteArray();
 		}
 
 		public void set(int x, int y, int z, int flag, boolean value)
