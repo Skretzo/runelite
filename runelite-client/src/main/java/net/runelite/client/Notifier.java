@@ -169,6 +169,9 @@ public class Notifier
 			case REQUEST:
 				clientUI.requestFocus();
 				break;
+			case TASKBAR:
+				clientUI.flashTaskbar();
+				break;
 			case FORCE:
 				clientUI.forceFocus();
 				break;
@@ -474,7 +477,7 @@ public class Notifier
 			}
 		}
 
-		// Using loop instead of start + setFramePosition prevents a the clip
+		// Using loop instead of start + setFramePosition prevents the clip
 		// from not being played sometimes, presumably a race condition in the
 		// underlying line driver
 		clip.loop(1);
