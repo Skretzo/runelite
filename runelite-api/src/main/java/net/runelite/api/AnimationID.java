@@ -57,6 +57,7 @@ public final class AnimationID
 	public static final int WOODCUTTING_2H_RUNE = 10070;
 	public static final int WOODCUTTING_2H_DRAGON = 10071;
 	public static final int WOODCUTTING_2H_CRYSTAL = 10072;
+	public static final int WOODCUTTING_2H_CRYSTAL_INACTIVE = 10073;
 	public static final int WOODCUTTING_2H_3A = 10074;
 	public static final int CONSUMING = 829; // consuming consumables
 	public static final int FIREMAKING = 733;
@@ -261,6 +262,8 @@ public final class AnimationID
 	public static final int CHURN_MILK_SHORT = 2793;
 	public static final int CHURN_MILK_MEDIUM = 2794;
 	public static final int CHURN_MILK_LONG = 2795;
+	public static final int CLEANING_SPECIMENS_1 = 6217;
+	public static final int CLEANING_SPECIMENS_2 = 6459;
 
 	// Ectofuntus animations
 	public static final int ECTOFUNTUS_FILL_SLIME_BUCKET = 4471;
