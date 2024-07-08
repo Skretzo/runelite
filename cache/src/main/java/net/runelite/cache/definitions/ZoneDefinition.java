@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Adam <Adam@sigterm.info>
+ * Copyright (c) 2024, Christopher Brown <christoabrown@gmail.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,47 +22,36 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.runelite.client.plugins.animsmoothing;
+package net.runelite.cache.definitions;
 
-import net.runelite.client.config.Config;
-import net.runelite.client.config.ConfigGroup;
-import net.runelite.client.config.ConfigItem;
+import lombok.Data;
+import lombok.ToString;
 
-@ConfigGroup(AnimationSmoothingPlugin.CONFIG_GROUP)
-public interface AnimationSmoothingConfig extends Config
+@Data
+@ToString(callSuper = true)
+public class ZoneDefinition extends AbstractWorldMapDataDefinition
 {
+	public int sourceZoneX;
+	public int sourceZoneZ;
+	public int displayZoneX;
+	public int displayZoneZ;
 
-	@ConfigItem(
-		keyName = "smoothPlayerAnimations",
-		name = "Smooth Player Animations",
-		description = "Configures whether the player animations are smooth or not",
-		position = 1
-	)
-	default boolean smoothPlayerAnimations()
+	public boolean equals(Object obj)
 	{
-		return true;
+		if (!(obj instanceof ZoneDefinition))
+		{
+			return false;
+		}
+		else
+		{
+			ZoneDefinition other = (ZoneDefinition) obj;
+			return other.displaySquareX == this.displaySquareX && other.displaySquareZ == this.displaySquareZ
+					&& other.displayZoneX == this.displayZoneX && other.displayZoneZ == this.displayZoneZ;
+		}
 	}
 
-	@ConfigItem(
-		keyName = "smoothNpcAnimations",
-		name = "Smooth NPC Animations",
-		description = "Configures whether the npc animations are smooth or not",
-		position = 2
-	)
-	default boolean smoothNpcAnimations()
+	public int hashCode()
 	{
-		return true;
+		return this.displaySquareX | this.displaySquareZ << 8 | this.displayZoneX << 16 | this.displayZoneZ << 24;
 	}
-
-	@ConfigItem(
-		keyName = "smoothObjectAnimations",
-		name = "Smooth Object Animations",
-		description = "Configures whether the object animations are smooth or not",
-		position = 3
-	)
-	default boolean smoothObjectAnimations()
-	{
-		return true;
-	}
-
 }

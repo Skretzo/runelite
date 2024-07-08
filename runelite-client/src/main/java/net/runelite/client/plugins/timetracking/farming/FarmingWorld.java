@@ -40,7 +40,6 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import net.runelite.api.NpcID;
-import net.runelite.api.NullNpcID;
 import net.runelite.api.Varbits;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.client.plugins.timetracking.Tab;
@@ -52,6 +51,7 @@ class FarmingWorld
 	private Multimap<Integer, FarmingRegion> regions = HashMultimap.create();
 
 	@Getter
+	@SuppressWarnings("PMD.ImmutableField")
 	private Map<Tab, Set<FarmingPatch>> tabs = new HashMap<>();
 
 	private final Comparator<FarmingPatch> tabSorter = Comparator
@@ -82,7 +82,7 @@ class FarmingWorld
 		));
 
 		add(new FarmingRegion("Avium Savannah", 6702, true,
-			new FarmingPatch("", Varbits.FARMING_4771, PatchImplementation.HARDWOOD_TREE, NullNpcID.NULL_13401)
+			new FarmingPatch("", Varbits.FARMING_4771, PatchImplementation.HARDWOOD_TREE, NpcID.MARCELLUS_12936)
 		), 6446);
 
 		add(new FarmingRegion("Brimhaven", 11058, false,
