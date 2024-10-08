@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Jordan Atwood <jordan.atwood423@gmail.com>
+ * Copyright (c) 2024, Adam <Adam@sigterm.info>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,10 +22,20 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.runelite.client.plugins.timers;
+package net.runelite.api.events;
 
-enum GameTimerImageType
+import lombok.Value;
+import net.runelite.api.Scene;
+import net.runelite.api.WorldView;
+
+/**
+ * This event is run from the maploader thread prior to the map load completing.
+ * Most client operations can't be done from this thread safely.
+ * You probably don't want to use this event.
+ */
+@Value
+public class PreMapLoad
 {
-	ITEM,
-	SPRITE
+	WorldView worldView;
+	Scene scene;
 }

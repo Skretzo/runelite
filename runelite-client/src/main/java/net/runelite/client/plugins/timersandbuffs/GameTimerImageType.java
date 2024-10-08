@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Seth <Sethtroll3@gmail.com>
+ * Copyright (c) 2018, Jordan Atwood <jordan.atwood423@gmail.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,53 +22,10 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.runelite.client.plugins.motherlode;
+package net.runelite.client.plugins.timersandbuffs;
 
-import java.time.Duration;
-import java.time.Instant;
-import javax.inject.Singleton;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
-
-@Getter
-@Slf4j
-@Singleton
-class MotherlodeSession
+enum GameTimerImageType
 {
-	private static final long HOUR = Duration.ofHours(1).toMillis();
-
-	private int perHour;
-
-	private Instant lastPayDirtMined;
-	private int totalMined;
-
-	private Instant recentPayDirtMined;
-	private int recentMined;
-
-	public void incrementPayDirtMined()
-	{
-		Instant now = Instant.now();
-
-		lastPayDirtMined = now;
-		++totalMined;
-
-		if (recentMined == 0)
-		{
-			recentPayDirtMined = now;
-		}
-		++recentMined;
-
-		Duration timeSinceStart = Duration.between(recentPayDirtMined, now);
-		if (!timeSinceStart.isZero())
-		{
-			perHour = (int) ((double) recentMined * HOUR / timeSinceStart.toMillis());
-		}
-	}
-
-	public void resetRecent()
-	{
-		recentPayDirtMined = null;
-		recentMined = 0;
-	}
-
+	ITEM,
+	SPRITE
 }

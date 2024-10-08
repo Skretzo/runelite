@@ -929,7 +929,7 @@ public class CrypticClue extends ClueScroll implements NpcClueScroll, ObjectClue
 			.text("One of several rhyming brothers, in business attire with an obsession for paper work.")
 			.location(new WorldPoint(3186, 3936, 0))
 			.npc("Piles")
-			.solution("Speak to Piles in the Wilderness Resource Area. An entry fee of 7,500 coins is required, or less if Wilderness Diaries have been completed.")
+			.solutionProvider((plugin) -> "Speak to Piles in the Wilderness Resource Area." + getResourceAreaCost(plugin))
 			.build(),
 		CrypticClue.builder()
 			.text("Search the drawers on the ground floor of a building facing Ardougne's market.")
@@ -1622,7 +1622,7 @@ public class CrypticClue extends ClueScroll implements NpcClueScroll, ObjectClue
 		CrypticClue.builder()
 			.text("More resources than I can handle, but in a very dangerous area. Can't wait to strike gold!")
 			.location(new WorldPoint(3183, 3941, 0))
-			.solution("Dig between the three gold ores in the Wilderness Resource Area. An entry fee of 7,500 coins is required, or less if Wilderness Diaries have been completed.")
+			.solutionProvider((plugin) -> "Dig between the three gold ores in the Wilderness Resource Area." + getResourceAreaCost(plugin))
 			.build(),
 		CrypticClue.builder()
 			.text("Observing someone in a swamp, under the telescope lies treasure.")
@@ -1694,8 +1694,8 @@ public class CrypticClue extends ClueScroll implements NpcClueScroll, ObjectClue
 		CrypticClue.builder()
 			.text("Search the food barrel at the top of the Hunter Guild.")
 			.location(new WorldPoint(1560, 3048, 2))
-			.objectId(ObjectID.FOOD_BARREL)
-			.solution("Search the food barrel at the top of the Hunter Guild.")
+			.objectId(ObjectID.FOOD_POT)
+			.solution("Search the food pot at the top of the Hunter Guild.")
 			.build(),
 		CrypticClue.builder()
 			.text("Are you somewhat entertained?")
@@ -1708,6 +1708,21 @@ public class CrypticClue extends ClueScroll implements NpcClueScroll, ObjectClue
 			.location(new WorldPoint(1432, 9584, 0))
 			.npc("Funbo")
 			.solution("Speak to Funbo inside Cam Torum's pub.")
+			.build(),
+		CrypticClue.builder()
+			.text("Dig at a waterfall by the pines in the serpent's shadow.")
+			.location(new WorldPoint(1490, 3257, 0))
+			.solution("Dig by the waterfall in Quetzacalli Gorge.")
+			.build(),
+		CrypticClue.builder()
+			.text("Banish a chilling spirit.")
+			.npc("Frost Nagua")
+			.solution("Kill a frost nagua.")
+			.build(),
+		CrypticClue.builder()
+			.text("Dig outside the bank on Aldarin.")
+			.location(new WorldPoint(1390, 2926, 0))
+			.solution("Dig outside the bank on Aldarin.")
 			.build()
 	);
 
@@ -1715,16 +1730,21 @@ public class CrypticClue extends ClueScroll implements NpcClueScroll, ObjectClue
 	private static final WorldPoint VIGGORA_SLAYER_TOWER = new WorldPoint(3447, 3547, 1);
 	private static final WorldPoint VIGGORA_EDGEVILLE_DUNGEON = new WorldPoint(3121, 9995, 0);
 
+	private static final int DEFAULT_RESOURCE_AREA_COST = 7500;
+
 	private final String text;
 	@Nullable
 	private final String npc;
 	private final int objectId;
+	@Getter(AccessLevel.NONE)
 	private final String solution;
 	@Nullable
 	private final String questionText;
 	@Nullable
 	@Getter(AccessLevel.PRIVATE)
 	private final Function<ClueScrollPlugin, WorldPoint> locationProvider;
+	@Getter(AccessLevel.PRIVATE)
+	private final Function<ClueScrollPlugin, String> solutionProvider;
 	private final List<Integer> npcRegions;
 
 	@Builder
@@ -1734,6 +1754,7 @@ public class CrypticClue extends ClueScroll implements NpcClueScroll, ObjectClue
 		int objectId,
 		@Nullable WorldPoint location,
 		@Nullable Function<ClueScrollPlugin, WorldPoint> locationProvider,
+		@Nullable Function<ClueScrollPlugin, String> solutionProvider,
 		String solution,
 		@Nullable String questionText,
 		boolean requiresLight,
@@ -1744,6 +1765,7 @@ public class CrypticClue extends ClueScroll implements NpcClueScroll, ObjectClue
 		this.npc = npc;
 		this.objectId = objectId > 0 ? objectId : -1;
 		this.locationProvider = locationProvider != null ? locationProvider : (location != null ? (plugin) -> location : null);
+		this.solutionProvider = solutionProvider != null ? solutionProvider : (plugin) -> solution;
 		this.solution = solution;
 		this.questionText = questionText;
 		this.npcRegions = npcRegions;
@@ -1756,6 +1778,11 @@ public class CrypticClue extends ClueScroll implements NpcClueScroll, ObjectClue
 	public WorldPoint getLocation(ClueScrollPlugin plugin)
 	{
 		return locationProvider == null ? null : locationProvider.apply(plugin);
+	}
+
+	public String getSolution(ClueScrollPlugin plugin)
+	{
+		return solutionProvider.apply(plugin);
 	}
 
 	@Override
@@ -1793,7 +1820,7 @@ public class CrypticClue extends ClueScroll implements NpcClueScroll, ObjectClue
 
 		panelComponent.getChildren().add(LineComponent.builder().left("Solution:").build());
 		panelComponent.getChildren().add(LineComponent.builder()
-			.left(getSolution())
+			.left(getSolution(plugin))
 			.leftColor(TITLED_CONTENT_COLOR)
 			.build());
 
@@ -1898,5 +1925,26 @@ public class CrypticClue extends ClueScroll implements NpcClueScroll, ObjectClue
 				log.warn("Unknown viggora location for unexpected varb value {}", varb);
 				return null;
 		}
+	}
+
+	private static String getResourceAreaCost(ClueScrollPlugin plugin)
+	{
+		if (plugin.getClient().getVarbitValue(Varbits.DIARY_WILDERNESS_ELITE) == 1)
+		{
+			return "";
+		}
+
+		int resourceAreaCost = DEFAULT_RESOURCE_AREA_COST;
+
+		if (plugin.getClient().getVarbitValue(Varbits.DIARY_WILDERNESS_HARD) == 1)
+		{
+			resourceAreaCost = (int) (DEFAULT_RESOURCE_AREA_COST * 0.5);
+		}
+		else if (plugin.getClient().getVarbitValue(Varbits.DIARY_WILDERNESS_MEDIUM) == 1)
+		{
+			resourceAreaCost = (int) (DEFAULT_RESOURCE_AREA_COST * 0.8);
+		}
+
+		return String.format(" An entry fee of %,d coins is required.", resourceAreaCost);
 	}
 }

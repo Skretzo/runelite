@@ -308,3 +308,52 @@ R 36 147 37 147
 // observatory dungeon
 n
 r 36 146
+
+// ham storeroom
+n
+r 40 81
+
+// mor ul rek
+n
+r 37 80
+R 38 79 39 80
+
+// barbarian assault lobby
+n
+r 40 82
+
+// mage training arena
+n
+r 52 150
+
+// mta telekinetic theatre
+n
+r 52 151
+
+// water ravine (spirits of the elid)
+n
+r 52 149
+m 52 148
+c 2 7
+
+// kalphite cave
+n
+r 51 148
+m 51 149
+C 0 0 7 1
+m 52 148
+C 0 0 2 6
+
+// kalphite lair
+n
+r 54 148
+
+// lumbridge underground
+n
+R 50 148 50 151
+r 49 149
+r 51 150
+
+// desert mining camp (the tourist trap)
+n
+r 51 147
