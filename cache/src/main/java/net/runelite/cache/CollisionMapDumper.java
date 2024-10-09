@@ -51,7 +51,9 @@ import org.apache.commons.cli.ParseException;
  *
  * Cache and XTEA keys can be downloaded from:
  * https://archive.openrs2.org/caches
- * and replace "mapsquare" with "region" and "key" with "keys"
+ * and replace "mapsquare" with "region" and "key" with "keys".
+ * Compile the client with "mvn install -f pom.xml -DskipTests -U".
+ * Run "java net.runelite.cache.CollisionMapDumper --cachedir ../cache --xteapath ../keys.json --outputdir ../output"
  */
 public class CollisionMapDumper
 {
