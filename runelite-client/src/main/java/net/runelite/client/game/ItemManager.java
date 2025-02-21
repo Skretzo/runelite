@@ -58,7 +58,6 @@ import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.RuneLiteConfig;
 import net.runelite.client.util.AsyncBufferedImage;
 import net.runelite.http.api.item.ItemPrice;
-import net.runelite.http.api.item.ItemStats;
 
 @Singleton
 @Slf4j
@@ -185,6 +184,15 @@ public class ItemManager
 
 		put(AGILITY_CAPET_13341, AGILITY_CAPET).
 		put(AGILITY_CAPE_13340, AGILITY_CAPE).
+
+		put(WOOD_CAMO_TOP_28839, WOOD_CAMO_TOP).
+		put(WOOD_CAMO_LEGS_28842, WOOD_CAMO_LEGS).
+		put(JUNGLE_CAMO_TOP_28845, JUNGLE_CAMO_TOP).
+		put(JUNGLE_CAMO_LEGS_28848, JUNGLE_CAMO_LEGS).
+		put(DESERT_CAMO_TOP_28851, DESERT_CAMO_TOP).
+		put(DESERT_CAMO_LEGS_28854, DESERT_CAMO_LEGS).
+		put(POLAR_CAMO_TOP_28857, POLAR_CAMO_TOP).
+		put(POLAR_CAMO_LEGS_28860, POLAR_CAMO_LEGS).
 		build();
 
 	@Inject
@@ -351,16 +359,38 @@ public class ItemManager
 	 * @return item stats
 	 */
 	@Nullable
-	public ItemStats getItemStats(int itemId, boolean allowNote)
+	public ItemStats getItemStats(int itemId)
 	{
 		ItemComposition itemComposition = getItemComposition(itemId);
 
-		if (itemComposition == null || itemComposition.getName() == null || (!allowNote && itemComposition.getNote() != -1))
+		if (itemComposition.getName() == null || itemComposition.getNote() != -1)
 		{
 			return null;
 		}
 
 		return itemStats.get(canonicalize(itemId));
+	}
+
+	/**
+	 * Look up an item's stats
+	 *
+	 * @param itemId item id
+	 * @return item stats
+	 * @deprecated See {@link #getItemStats(int)}
+	 */
+	@Nullable
+	@Deprecated
+	public net.runelite.http.api.item.ItemStats getItemStats(int itemId, boolean allowNote)
+	{
+		ItemComposition itemComposition = getItemComposition(itemId);
+
+		if (itemComposition.getName() == null || (!allowNote && itemComposition.getNote() != -1))
+		{
+			return null;
+		}
+
+		var stats = itemStats.get(canonicalize(itemId));
+		return stats != null ? stats.toHttpApiFormat() : null;
 	}
 
 	/**
