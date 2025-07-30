@@ -91,6 +91,7 @@ public class CollisionMapDumper
 		options.addOption(Option.builder().longOpt("cachedir").hasArg().required().build());
 		options.addOption(Option.builder().longOpt("xteapath").hasArg().required().build());
 		options.addOption(Option.builder().longOpt("outputdir").hasArg().required().build());
+		options.addOption(Option.builder().longOpt("region").hasArg().desc("Process only specific region (format: x_y)").build());
 
 		CommandLineParser parser = new DefaultParser();
 		CommandLine cmd;
@@ -108,6 +109,7 @@ public class CollisionMapDumper
 		final String cacheDirectory = cmd.getOptionValue("cachedir");
 		final String xteaJSONPath = cmd.getOptionValue("xteapath");
 		final String outputDirectory = cmd.getOptionValue("outputdir");
+		final String regionFilter = cmd.getOptionValue("region");
 
 		XteaKeyManager xteaKeyManager = new XteaKeyManager();
 		try (FileInputStream fin = new FileInputStream(xteaJSONPath))
@@ -128,12 +130,58 @@ public class CollisionMapDumper
 
 			Collection<Region> regions = dumper.regionLoader.getRegions();
 
-			int n = 0;
-			int total = regions.size();
-
-			for (Region region : regions)
+			// Filter regions if specific region is requested
+			if (regionFilter != null)
 			{
-				dumper.makeCollisionMap(region, outputDirectory, ++n, total);
+				String[] coords = regionFilter.split("_");
+				if (coords.length != 2)
+				{
+					System.err.println("Invalid region format. Use: x_y (e.g., 50_50)");
+					System.exit(-1);
+					return;
+				}
+				
+				try
+				{
+					int targetX = Integer.parseInt(coords[0].trim());
+					int targetY = Integer.parseInt(coords[1].trim());
+					
+					Region targetRegion = null;
+					for (Region region : regions)
+					{
+						if (region.getRegionX() == targetX && region.getRegionY() == targetY)
+						{
+							targetRegion = region;
+							break;
+						}
+					}
+					
+					if (targetRegion == null)
+					{
+						System.err.println("Region " + targetX + "_" + targetY + " not found in cache");
+						System.exit(-1);
+						return;
+					}
+					
+					System.out.println("Processing only region " + targetX + "_" + targetY + " (baseX=" + targetRegion.getBaseX() + ", baseY=" + targetRegion.getBaseY() + ")");
+					dumper.makeCollisionMap(targetRegion, outputDirectory, 1, 1);
+				}
+				catch (NumberFormatException e)
+				{
+					System.err.println("Invalid region coordinates. Use numeric values: x_y");
+					System.exit(-1);
+					return;
+				}
+			}
+			else
+			{
+				int n = 0;
+				int total = regions.size();
+
+				for (Region region : regions)
+				{
+					dumper.makeCollisionMap(region, outputDirectory, ++n, total);
+				}
 			}
 		}
 	}
@@ -202,7 +250,14 @@ public class CollisionMapDumper
 					for (Location loc : region.getLocations())
 					{
 						Position pos = loc.getPosition();
-						if (pos.getX() != regionX || pos.getY() != regionY || pos.getZ() != tileZ)
+						if (pos.getX() != regionX || pos.getY() != regionY)
+						{
+							continue;
+						}
+						
+						// For bridges, only process objects at the current Z-level
+						// Bridge-level objects should not affect ground-level collision
+						if (pos.getZ() != z)
 						{
 							continue;
 						}
